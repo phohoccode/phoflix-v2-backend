@@ -8,9 +8,10 @@ const connectionMongoDB = require('./models/mongoDB/connectMongoDB')
 const configCors = require('./config/cors')
 const testRouter = require('./routers/testRouter')
 const authRouter = require('./routers/authRouter')
+const commentRouter = require("./routers/commentRouter")
+const ratingRouter = require("./routers/ratingRouter")
 const { configPassport } = require('./controller/passportController')
 const configLoginWithGoogle = require('./controller/googleController')
-// const configLoginWithFacebook = require('./controller/facebookController')
 const configSession = require('./config/session')
 
 const app = express()
@@ -29,12 +30,9 @@ configSession(app)
 configPassport()
 configLoginWithGoogle()
 
-// init routes
-// app.use('/', testRouter)
 app.use('/auth', authRouter)
-
-// configLoginWithFacebook()
-
+app.use('/comment', commentRouter)
+app.use('/rating', ratingRouter)
 
 app.listen(PORT, () => {
     console.log(`http://localhost:${PORT}`)

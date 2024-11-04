@@ -15,9 +15,6 @@ module.exports = {
       code: {
         type: Sequelize.STRING
       },
-      type_account: {
-        type: Sequelize.STRING
-      },
       type_otp: {
         type: Sequelize.STRING
       },

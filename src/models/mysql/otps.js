@@ -16,7 +16,6 @@ module.exports = (sequelize, DataTypes) => {
   OTPs.init({
     email: DataTypes.STRING,
     code: DataTypes.STRING,
-    type_account: DataTypes.STRING,
     type_otp: DataTypes.STRING
   }, {
     sequelize,

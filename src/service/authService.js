@@ -119,18 +119,13 @@ const handleLogin = async (rawData) => {
             EC: 0,
             EM: 'Đăng nhập thành công!',
             DT: {
-                user: {
-                    username: user.username,
-                    email: user.email,
-                    address: user.address,
-                    phone_number: user.phone_number,
-                    gender: user.gender,
-                    refresh_token: uuidv4(),
-                },
-                status: {
-                    EC: 0,
-                    EM: 'Đăng nhập thành công!'
-                }
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                address: user.address,
+                phone_number: user.phone_number,
+                gender: user.gender,
+                code: uuidv4()
             }
         }
     } catch (error) {
@@ -169,6 +164,7 @@ const handleRegister = async (rawData) => {
         const hashPassword = hashUserPassword(rawData.password, salt)
 
         const response = await db.Users.create({
+            id: uuidv4(),
             username: rawData.username,
             email: rawData.email,
             password: hashPassword,
@@ -210,6 +206,7 @@ const findOrInsertProfileSocialToDB = async (rawData) => {
 
         if (!user) {
             user = await db.Users.create({
+                id: uuidv4(),
                 username: rawData.username,
                 email: rawData.email,
                 type_account: rawData.type
@@ -227,10 +224,113 @@ const findOrInsertProfileSocialToDB = async (rawData) => {
     }
 }
 
+const handleResetPassword = async (rawData) => {
+    try {
+        const isEmailExist = await checkExistEmail(rawData.email)
+
+        if (!isEmailExist) {
+            return {
+                EC: -1,
+                EM: 'Địa chỉ email không tồn tại!'
+            }
+        }
+
+        const user = await db.OTPs.findOne({
+            where: { email: rawData.email, type_otp: rawData.type_otp },
+            raw: true
+        })
+
+
+        if (!user || user.code !== rawData.code) {
+            return {
+                EC: -1,
+                EM: 'Mã xác nhận không chính xác!',
+            }
+        }
+
+        const hashPassword = hashUserPassword(rawData.password)
+
+        const rows = await db.Users.update(
+            { password: hashPassword },
+            { where: { email: rawData.email } }
+        )
+
+        if (rows[0] === 0) {
+            return {
+                EC: -1,
+                EM: 'Thay đổi mật khẩu thất bại!'
+            }
+        }
+
+        return {
+            EC: 0,
+            EM: 'Thay đổi mật khẩu thành công!'
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            EC: -1,
+            EM: 'Lỗi không xác định!'
+        }
+    }
+}
+
+const handleUpdateUser = async (rawData) => {
+    try {
+
+        const rows = await db.Users.update(
+            {
+                username: rawData.username,
+                phone_number: rawData.phone_number,
+                gender: rawData.gender,
+                address: rawData.address
+            },
+            { where: { email: rawData.email, type_account: rawData.type_account } }
+        )
+
+
+        if (rows[0] === 0) {
+            return {
+                EC: -1,
+                EC: 'Cập nhật người dùng thất bại!',
+                DT: {}
+            }
+        }
+
+        const user = await db.Users.findOne({
+            where: { email: rawData.email, type_account: rawData.type_account },
+            raw: true
+        })
+
+        return {
+            EC: 0,
+            EM: 'Cập nhật người dùng thành công!',
+            DT: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                address: user.address,
+                type_account: user.type_account,
+                gender: user.gender,
+                phone_number: user.phone_number,
+                refresh_token: user.refresh_token,
+            }
+        }
+
+    } catch (error) {
+        console.log(error)
+        return {
+            EC: -1,
+            EM: 'Lỗi không xác định!'
+        }
+    }
+}
 
 module.exports = {
     handleRegister,
     handleLogin,
     insertCodeToDB,
-    findOrInsertProfileSocialToDB
+    findOrInsertProfileSocialToDB,
+    handleResetPassword,
+    handleUpdateUser
 }

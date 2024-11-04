@@ -1,4 +1,5 @@
 const authService = require("../service/authService")
+const JWTService = require('../service/JWTService')
 const nodemailer = require("nodemailer");
 const handlebars = require('handlebars');
 const fs = require('fs');
@@ -43,11 +44,10 @@ const sendOTP = async (req, res) => {
             html: htmlToSend
         });
 
-        console.log(req.body)
-
         if (response?.messageId) {
-            const response = await authService.insertCodeToDB(req.body.email, OTP, req.body.type)
+            const response = await authService.insertCodeToDB(req.body.email, OTP, req.body.type_otp)
 
+            console.log(response)
             if (+response.EC !== 0) {
                 return res.status(401).json({
                     EC: response.EC,
@@ -114,8 +114,71 @@ const resgister = async (req, res) => {
     }
 }
 
+const forgotPassword = async (req, res, next) => {
+    try {
+        const data = await authService.handleResetPassword(req.body)
+
+        return res.status(200).json({
+            EC: data.EC,
+            EM: data.EM,
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            EC: -1,
+            EM: 'Lỗi không xác định!'
+        })
+    }
+}
+
+const updateUser = async (req, res) => {
+    try {
+
+        const data = await authService.handleUpdateUser(req.body)
+        console.log('>>> updateUser-data', data)
+
+        const payload = {
+            id: data.DT.id,
+            username: data.DT.username,
+            email: data.DT.email,
+            gender: data.DT.gender,
+            phone_number: data.DT.phone_number,
+            address: data.DT.address,
+            type_account: data.DT.type_account,
+        }
+
+        const accessToken = JWTService.createJWT(payload)
+
+        req.user = {
+            ...payload,
+            access_token: accessToken,
+            refresh_token: data.DT.refresh_token
+        }
+
+        // set cookies
+        JWTService.insertTokenToCookies(res, accessToken, data.DT.refresh_token)
+
+        return res.status(200).json({
+            EC: data.EC,
+            EM: data.EM,
+            DT: {
+                ...data.DT,
+                access_token: accessToken
+            }
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            EC: -1,
+            EM: 'Lỗi không xác định!'
+        })
+    }
+}
+
 module.exports = {
     login,
     resgister,
-    sendOTP
+    sendOTP,
+    forgotPassword,
+    updateUser
 }
