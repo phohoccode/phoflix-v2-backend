@@ -1,42 +1,43 @@
 const db = require('../models/mysql/index')
 const { v4: uuidv4 } = require('uuid');
 
-const handleGetRating = async (movieSlug) => {
+const handleGetRating = async (rawData) => {
     try {
+        const { movieSlug, userId } = rawData
         const response = await db.Ratings.findAll({
             where: { movie_slug: movieSlug },
             include: [{ model: db.Users, as: 'user', attributes: ['username'] }],
             raw: true
         });
 
-        // Kiểm tra nếu có đánh giá
         if (response.length === 0) {
             return {
                 EC: 0,
                 EM: 'Không có đánh giá nào.',
                 DT: {
-                    average_rating: 0,
-                    count: 0
+                    ratingWidthUser: 0,
+                    averageRating: 0,
+                    countRating: 0
                 }
             };
         }
 
-        // Tính toán giá trị trung bình rating và số lượng rating
-        const totalRating = response.reduce((acc, rating) => acc + rating.rating, 0);
-        const average_rating = totalRating / response.length;
-        const count = response.length;
+        const ratingCurrentUser = await db.Ratings.findOne({
+            where: { user_id: userId, movie_slug: movieSlug },
+            raw: true
+        })
 
-        // In kết quả
-        console.log('>>> rating', response);
-        console.log('>>> average rating', average_rating);
-        console.log('>>> count', count);
+        const totalRating = response.reduce((acc, rating) => acc + rating.rating, 0);
+        const averageRating = totalRating / response.length;
+        const countRating = response.length;
 
         return {
             EC: 0,
-            EM: 'Lấy danh sách đánh giá thành công',
+            EM: 'Lấy danh sách đánh giá thành công!',
             DT: {
-                average_rating: average_rating,
-                count: count
+                ratingWidthUser: ratingCurrentUser?.rating,
+                averageRating: averageRating,
+                countRating: countRating
             }
         };
 
@@ -52,23 +53,25 @@ const handleGetRating = async (movieSlug) => {
 const handleAddRating = async (rawData) => {
     try {
 
-        const rating = await db.Ratings.findOne({
-            where: { user_id: rawData.user_id }
+        const { userId, movieSlug, rating } = rawData
+
+        const response = await db.Ratings.findOne({
+            where: { movie_slug: movieSlug, user_id: userId }
         })
 
-        console.log(rating)
-
-        if (!rating) {
-            const response = await db.Ratings.create({
+        if (!response) {
+            await db.Ratings.create({
                 id: uuidv4(),
-                user_id: rawData.user_id,
-                movie_slug: rawData.movie_slug,
-                rating: rawData.rating
+                user_id: userId,
+                movie_slug: movieSlug,
+                rating: rating
             })
+
         } else {
-            const response = await db.Ratings.update({
-                rating: rawData.rating
-            }, { where: { user_id: rawData.user_id } })
+            const rows = await db.Ratings.update(
+                { rating: rawData.rating },
+                { where: { user_id: userId, movie_slug: movieSlug } }
+            )
         }
 
         return {

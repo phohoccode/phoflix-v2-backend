@@ -2,8 +2,7 @@ const ratingService = require('../service/ratingServicer')
 
 const getRatings = async (req, res) => {
     try {
-        const movieSlug = req.params.movieSlug ?? ""
-        const data = await ratingService.handleGetRating(movieSlug)
+        const data = await ratingService.handleGetRating(req.body)
 
         return res.json({
             EC: data.EC,

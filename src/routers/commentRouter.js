@@ -3,9 +3,9 @@ const commentController = require("../controller/commentController")
 
 const route = express.Router()
 
-route.get('/get-comments/:movieSlug', commentController.getComments)
+route.get('/get-comments/:movieSlug/:sortOrder', commentController.getComments)
 route.post('/add-comment', commentController.addComment)
 route.post('/delete-comment', commentController.deleteComment)
-route.post('/update-comment', commentController.updateComment)
+route.put('/update-comment', commentController.updateComment)
 
 module.exports = route

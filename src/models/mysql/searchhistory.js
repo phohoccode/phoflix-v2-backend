@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
     SearchHistory.init({
-        email: DataTypes.STRING,
+        type: DataTypes.STRING,
         user_id: DataTypes.STRING,
         keyword: DataTypes.STRING
     }, {

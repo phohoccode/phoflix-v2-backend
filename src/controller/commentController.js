@@ -2,8 +2,10 @@ const commentService = require("../service/commentService")
 
 const getComments = async (req, res) => {
     try {
-        const movieSlug = req.params.movieSlug ?? ""
-        const data = await commentService.handleGetComments(movieSlug)
+        const { movieSlug, sortOrder } = req.params
+        const data = await commentService.handleGetComments({
+            movieSlug, sortOrder
+        })
 
         return res.json({
             EC: data.EC,

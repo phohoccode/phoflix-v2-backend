@@ -8,9 +8,6 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.STRING
             },
-            email: {
-                type: Sequelize.STRING
-            },
             user_id: {
                 type: Sequelize.STRING,
                 references: {
@@ -19,6 +16,9 @@ module.exports = {
                 },
             },
             keyword: {
+                type: Sequelize.STRING
+            },
+            type: {
                 type: Sequelize.STRING
             },
             createdAt: {

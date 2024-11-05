@@ -1,18 +1,20 @@
 const db = require('../models/mysql/index')
 const { v4: uuidv4 } = require('uuid');
 
-const handleGetComments = async (movieSlug) => {
+const handleGetComments = async (rawData) => {
     try {
-        const response = await db.Comments.findAll({
+        const { movieSlug, sortOrder } = rawData
+        const comments = await db.Comments.findAll({
             where: { movie_slug: movieSlug },
             include: [{ model: db.Users, as: 'user', attributes: ['username'] }],
+            order: [['createdAt', sortOrder]],
             raw: true
         });
 
         return {
             EC: 0,
             EM: 'Lấy danh sách bình luận thành công',
-            DT: response
+            DT: comments
         }
 
 
@@ -24,6 +26,7 @@ const handleGetComments = async (movieSlug) => {
         }
     }
 }
+
 
 const handleAddComment = async (rawData) => {
     try {
@@ -57,14 +60,20 @@ const handleAddComment = async (rawData) => {
 
 const handleDeleteComment = async (idComment) => {
     try {
-        console.log('>>>> idComment', idComment)
-        const response = await db.Comments.destroy({
+        const rows = await db.Comments.destroy({
             where: { id: idComment }
         })
 
-        return {
-            EC: 0,
-            EM: "Xoá bình luận thành công"
+        if (rows === 0) {
+            return {
+                EC: -1,
+                EM: "Xoá bình luận thất bại!"
+            }
+        } else {
+            return {
+                EC: 0,
+                EM: "Xoá bình luận thành công"
+            }
         }
     } catch (error) {
         console.log(error)
@@ -77,16 +86,23 @@ const handleDeleteComment = async (idComment) => {
 
 const handleUpdateComment = async (rawData) => {
     try {
-        console.log('>>> rawData', rawData)
-        const response = await db.Comments.update(
+        const rows = await db.Comments.update(
             { content: rawData.content },
             { where: { id: rawData.idComment } }
         )
 
-        return {
-            EC: 0,
-            EM: "Chỉnh sửa bình luận thành công"
+        if (rows[0] === 0) {
+            return {
+                EC: -1,
+                EM: "Chỉnh sửa bình luận thất bại!"
+            }
+        } else {
+            return {
+                EC: 0,
+                EM: "Chỉnh sửa bình luận thành công"
+            }
         }
+
     } catch (error) {
         console.log(error)
         return {

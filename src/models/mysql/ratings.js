@@ -18,7 +18,6 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
     Ratings.init({
-        email: DataTypes.STRING,
         user_id: DataTypes.STRING,
         movie_slug: DataTypes.STRING,
         rating: DataTypes.INTEGER
