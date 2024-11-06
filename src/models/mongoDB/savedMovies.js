@@ -1,14 +1,10 @@
 const mongoose = require('mongoose');
 
-const savedMovies = new mongoose.Schema({
-    email: {
+const savedMoviesSchema = new mongoose.Schema({
+    userId: {
         type: String,
         required: true,
         unique: true
-    },
-    type_account: {
-        type: String,
-        required: true,
     },
     movies: [{
         type: mongoose.Schema.Types.Mixed
@@ -17,6 +13,9 @@ const savedMovies = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-})
+});
 
-module.exports = savedMovies
+
+const SavedMovies = mongoose.model('SavedMovies', savedMoviesSchema);
+
+module.exports = SavedMovies;

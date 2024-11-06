@@ -1,14 +1,10 @@
 const mongoose = require('mongoose');
 
-const viewedHistory = new mongoose.Schema({
-    email: {
+const watchHistorySchema = new mongoose.Schema({
+    userId: {
         type: String,
         required: true,
         unique: true
-    },
-    type_account: {
-        type: String,
-        required: true,
     },
     movies: [{
         type: mongoose.Schema.Types.Mixed
@@ -17,6 +13,8 @@ const viewedHistory = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-})
+});
 
-module.exports = viewedHistory
+const WatchHistory = mongoose.model('WatchHistory', watchHistorySchema);
+
+module.exports = WatchHistory;
