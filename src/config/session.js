@@ -13,9 +13,6 @@ const configSession = (app) => {
         host: process.env.DB_HOST,
         dialect: process.env.DB_DIALECT,
         logging: false,
-        define: {
-            freezeTableName: true
-        },
         timezone: '+07:00'
     })
 
@@ -31,9 +28,8 @@ const configSession = (app) => {
         resave: false,
         proxy: true,
         saveUninitialized: false,
-        expiration: 360,
         cookie: {
-            maxAge: 300 * 1000,
+            maxAge: 86400000,
             httpOnly: true,
             // secure: true,
             // sameSite: 'none'

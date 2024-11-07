@@ -4,29 +4,31 @@ const WatchHistory = require("../models/mongoDB/watchHistory")
 const handleGetALlMovies = async (rawData) => {
     try {
         const { userId, type } = rawData
-        console.log('>>> data', rawData)
-        let movies
+        let data
         type === 'saved-movies' ?
-            movies = await SavedMovies.find({ userId }) :
-            movies = await WatchHistory.find({ userId })
+            data = await SavedMovies.findOne({ userId }) :
+            data = await WatchHistory.findOne({ userId })
 
-        if (!movies || movies.length === 0) {
+        if (!data || data.length === 0) {
             return {
                 EC: 0,
-                EM: 'Danh sách phim đang trống!',
-                DT: []
+                EM: type === 'saved-movies' ? 'Danh sách phim đang trống!' : 'Lịch sử xem đang trống!',
+                DT: {
+                    type,
+                    movies: []
+                }
             };
         }
 
-        console.log('>>> movies', movies)
         return {
             EC: 0,
             EM: 'Lấy bộ phim đã lưu thành công!',
             DT: {
                 type,
-                movies
+                movies: data.movies
             }
         };
+       
 
     } catch (error) {
         console.log(error)

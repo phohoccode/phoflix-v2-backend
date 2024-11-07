@@ -10,6 +10,7 @@ const getActivityLog = async (req, res) => {
             EM: data.EM,
             DT: data.DT
         })
+
     } catch (error) {
         console.log(error)
         return res.status(500).json({

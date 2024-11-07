@@ -13,9 +13,10 @@ const configLoginWithGoogle = () => {
     },
         async function (req, accessToken, refreshToken, profile, cb) {
 
+            console.log('>>> profile', profile)
             const rawData = {
                 username: profile.displayName,
-                email: profile?.emails[0]?.value,
+                email: profile?.emails?.[0]?.value,
                 type: 'GOOGLE'
             }
 
@@ -24,8 +25,6 @@ const configLoginWithGoogle = () => {
             const user = await authService.findOrInsertProfileSocialToDB(rawData)
             console.log('>>> user', user)
             user.code = uuidv4()
-            console.log('avatar', profile?.photos[0]?.value)
-            user.avatar = profile?.photos[0]?.value ?? ""
 
             return cb(null, user)
         }

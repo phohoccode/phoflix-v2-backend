@@ -105,8 +105,6 @@ const insertTokenToCookies = (res, accessToken, refreshToken) => {
     }
 }
 
-
-
 module.exports = {
     createJWT,
     verifyToken,

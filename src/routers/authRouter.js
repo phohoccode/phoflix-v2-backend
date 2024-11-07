@@ -23,7 +23,7 @@ route.get('/google',
 route.get('/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     function (req, res) {
-        console.log(req.user)
+        console.log('callback', req.user)
         const { code, type_account } = req.user
         res.redirect(`${process.env.REACT_URL}/authenticate?token=${code}&type=${type_account}`);
     });

@@ -14,9 +14,9 @@ const sequelize = new Sequelize(
 const connectionMySql = async () => {
     try {
         await sequelize.authenticate();
-        console.log('Kết nối database thành công!');
+        console.log('Kết nối mysql thành công!');
     } catch (error) {
-        console.error('Kết nối database thất bại!', error);
+        console.error('Kết nối mysql thất bại!', error);
     }
 }
 

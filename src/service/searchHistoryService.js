@@ -11,7 +11,7 @@ const handleGetSearchHistory = async (userId) => {
 
         return {
             EC: 0,
-            EM: 'Lấy danh sách lịch sử thành công!',
+            EM: 'Lấy danh sách tìm kiếm thành công!',
             DT: response
         };
 
