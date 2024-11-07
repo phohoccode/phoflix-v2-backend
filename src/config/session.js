@@ -31,8 +31,8 @@ const configSession = (app) => {
         cookie: {
             maxAge: 86400000,
             httpOnly: true,
-            // secure: true,
-            // sameSite: 'none'
+            secure: true,
+            sameSite: 'none'
         }
     }));
 
