@@ -16,6 +16,7 @@ route.post('/send-otp', authController.sendOTP)
 route.post('/verify-token', JWTController.verifyToken)
 route.post('/forgot-password', authController.forgotPassword)
 route.post('/update-user', authController.updateUser)
+route.get('/user', authController.getUserAccount);
 
 route.get('/google',
     passport.authenticate('google', { scope: ['profile', 'email'] }));
@@ -27,13 +28,6 @@ route.get('/google/callback',
         const { code, type_account } = req.user
         res.redirect(`${process.env.REACT_URL}/authenticate?token=${code}&type=${type_account}`);
     });
-
-route.get('/user', (req, res) => {
-    if (req.isAuthenticated()) {
-        return res.json(req.user);
-    }
-    res.status(401).json({ message: 'Unauthorized' });
-});
 
 
 

@@ -86,7 +86,7 @@ const handleLogin = async (rawData) => {
     try {
         const user = await db.Users.findOne({
             where: {
-                email: rawData.email,
+                email: rawData?.email,
                 type_account: 'LOCAL'
             },
             raw: true
@@ -95,23 +95,23 @@ const handleLogin = async (rawData) => {
         if (!user) {
             return {
                 EC: -1,
-                EM: 'Tài khoản hoặc mật khẩu không chính xác!'
+                EM: 'Thông tin đăng nhập không chính xác!'
             }
         }
 
-        const isCorrectPassword = checkPassword(rawData.password, user.password)
+        const isCorrectPassword = checkPassword(rawData?.password, user?.password)
 
         if (!isCorrectPassword) {
             return {
                 EC: -1,
-                EM: 'Mật khẩu không chính xác!'
+                EM: 'Thông tin đăng nhập không chính xác!'
             }
         }
 
         if (+user.isLock === 1) {
             return {
                 EC: -1,
-                EM: 'Tài khoản đã bị khoá!'
+                EM: 'Tài khoản của bạn đã bị khoá!'
             }
         }
 
@@ -119,12 +119,12 @@ const handleLogin = async (rawData) => {
             EC: 0,
             EM: 'Đăng nhập thành công!',
             DT: {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                address: user.address,
-                phone_number: user.phone_number,
-                gender: user.gender,
+                id: user?.id,
+                username: user?.username,
+                email: user?.email,
+                address: user?.address,
+                phone_number: user?.phone_number,
+                gender: user?.gender,
                 code: uuidv4()
             }
         }
@@ -140,7 +140,7 @@ const handleLogin = async (rawData) => {
 const handleRegister = async (rawData) => {
     try {
 
-        const email = await checkExistEmail(rawData.email)
+        const email = await checkExistEmail(rawData?.email)
 
         if (email) {
             return {
@@ -150,23 +150,23 @@ const handleRegister = async (rawData) => {
         }
 
         const user = await db.OTPs.findOne({
-            where: { email: rawData.email, type_otp: rawData.type_otp },
+            where: { email: rawData?.email, type_otp: rawData?.type_otp },
             raw: true
         })
 
-        if (!user || user.code !== rawData.code) {
+        if (!user || user?.code !== rawData?.code) {
             return {
                 EC: -1,
                 EM: 'Mã xác nhận không chính xác!',
             }
         }
 
-        const hashPassword = hashUserPassword(rawData.password, salt)
+        const hashPassword = hashUserPassword(rawData?.password, salt)
 
         const response = await db.Users.create({
             id: uuidv4(),
-            username: rawData.username,
-            email: rawData.email,
+            username: rawData?.username,
+            email: rawData?.email,
             password: hashPassword,
             gender: "Nam",
             isLock: false,
@@ -200,19 +200,19 @@ const findOrInsertProfileSocialToDB = async (rawData) => {
         let user = null
 
         user = await db.Users.findOne({
-            where: { email: rawData.email, type_account: rawData.type },
+            where: { email: rawData?.email, type_account: rawData?.type },
             raw: true
         })
 
         if (!user) {
             user = await db.Users.create({
                 id: uuidv4(),
-                username: rawData.username,
-                email: rawData.email,
-                type_account: rawData.type
+                username: rawData?.username,
+                email: rawData?.email,
+                type_account: rawData?.type
             })
 
-            user = user.dataValues
+            user = user?.dataValues
         }
         return user
     } catch (error) {
@@ -226,7 +226,7 @@ const findOrInsertProfileSocialToDB = async (rawData) => {
 
 const handleResetPassword = async (rawData) => {
     try {
-        const isEmailExist = await checkExistEmail(rawData.email)
+        const isEmailExist = await checkExistEmail(rawData?.email)
 
         if (!isEmailExist) {
             return {
@@ -236,23 +236,23 @@ const handleResetPassword = async (rawData) => {
         }
 
         const user = await db.OTPs.findOne({
-            where: { email: rawData.email, type_otp: rawData.type_otp },
+            where: { email: rawData?.email, type_otp: rawData?.type_otp },
             raw: true
         })
 
 
-        if (!user || user.code !== rawData.code) {
+        if (!user || user?.code !== rawData?.code) {
             return {
                 EC: -1,
                 EM: 'Mã xác nhận không chính xác!',
             }
         }
 
-        const hashPassword = hashUserPassword(rawData.password)
+        const hashPassword = hashUserPassword(rawData?.password)
 
         const rows = await db.Users.update(
             { password: hashPassword },
-            { where: { email: rawData.email } }
+            { where: { email: rawData?.email } }
         )
 
         if (rows[0] === 0) {
@@ -280,12 +280,12 @@ const handleUpdateUser = async (rawData) => {
 
         const rows = await db.Users.update(
             {
-                username: rawData.username,
-                phone_number: rawData.phone_number,
-                gender: rawData.gender,
-                address: rawData.address
+                username: rawData?.username,
+                phone_number: rawData?.phone_number,
+                gender: rawData?.gender,
+                address: rawData?.address
             },
-            { where: { email: rawData.email, type_account: rawData.type_account } }
+            { where: { email: rawData?.email, type_account: rawData?.type_account } }
         )
 
 
@@ -298,22 +298,22 @@ const handleUpdateUser = async (rawData) => {
         }
 
         const user = await db.Users.findOne({
-            where: { email: rawData.email, type_account: rawData.type_account },
+            where: { email: rawData?.email, type_account: rawData?.type_account },
             raw: true
         })
 
         return {
             EC: 0,
-            EM: 'Cập nhật người dùng thành công!',
+            EM: 'Cập nhật thông tin thành công!',
             DT: {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                address: user.address,
-                type_account: user.type_account,
-                gender: user.gender,
-                phone_number: user.phone_number,
-                refresh_token: user.refresh_token,
+                id: user?.id,
+                username: user?.username,
+                email: user?.email,
+                address: user?.address,
+                type_account: user?.type_account,
+                gender: user?.gender,
+                phone_number: user?.phone_number,
+                refresh_token: user?.refresh_token,
             }
         }
 

@@ -32,8 +32,8 @@ const handleAddComment = async (rawData) => {
     try {
         const response = await db.Comments.create({
             id: uuidv4(),
-            user_id: rawData.user_id,
-            movie_slug: rawData.movie_slug,
+            user_id: rawData.userId,
+            movie_slug: rawData.movieSlug,
             content: rawData.content
         })
 

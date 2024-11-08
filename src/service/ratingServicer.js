@@ -68,7 +68,7 @@ const handleAddRating = async (rawData) => {
             })
 
         } else {
-            const rows = await db.Ratings.update(
+            await db.Ratings.update(
                 { rating: rawData.rating },
                 { where: { user_id: userId, movie_slug: movieSlug } }
             )

@@ -27,17 +27,22 @@ const handleGetSearchHistory = async (userId) => {
 const handleAddSearchHistory = async (rawData) => {
     try {
 
-        const { userId, type, keyword } = rawData
+        const { userId, type, keyword } = rawData;
         const idSearchHistory = rawData?.idSearchHistory ?? ""
 
-        console.log('>>> idSearchHistory', idSearchHistory)
+        if (!userId || !type || !keyword) {
+            return {
+                EC: -1,
+                EM: 'Thông tin đầu vào không đầy đủ!'
+            };
+        }
 
         const searchHisory = await db.SearchHistory.findOne({
             where: { id: idSearchHistory }
         })
 
         if (searchHisory) {
-            const rows = await db.SearchHistory.update(
+            await db.SearchHistory.update(
                 { type: 'favourite' },
                 { where: { id: idSearchHistory } }
             )
@@ -46,7 +51,7 @@ const handleAddSearchHistory = async (rawData) => {
                 EM: "Đã yêu thích lịch sử tìm kiếm!"
             }
         } else {
-            const response = await db.SearchHistory.create({
+            await db.SearchHistory.create({
                 id: uuidv4(),
                 user_id: userId,
                 type: type,
@@ -71,7 +76,6 @@ const handleAddSearchHistory = async (rawData) => {
 const handleDeleteSearchHistory = async (idSearchHistory) => {
     try {
 
-        
         const rows = await db.SearchHistory.destroy({
             where: { id: idSearchHistory }
         })

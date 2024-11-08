@@ -6,7 +6,6 @@ const JWTService = require('../service/JWTService')
 const verifyToken = async (req, res, next) => {
     try {
 
-        console.log('>>> req.user', req.user)
         const ssoToken = req.body?.token
 
         if (req.user?.code !== ssoToken) {

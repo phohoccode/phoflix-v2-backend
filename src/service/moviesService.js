@@ -9,7 +9,7 @@ const handleGetALlMovies = async (rawData) => {
             data = await SavedMovies.findOne({ userId }) :
             data = await WatchHistory.findOne({ userId })
 
-        if (!data || data.length === 0) {
+        if (!data || data?.length === 0) {
             return {
                 EC: 0,
                 EM: type === 'saved-movies' ? 'Danh sách phim đang trống!' : 'Lịch sử xem đang trống!',
@@ -25,10 +25,10 @@ const handleGetALlMovies = async (rawData) => {
             EM: 'Lấy bộ phim đã lưu thành công!',
             DT: {
                 type,
-                movies: data.movies
+                movies: data?.movies ?? []
             }
         };
-       
+
 
     } catch (error) {
         console.log(error)
@@ -62,7 +62,7 @@ const handleAddMovie = async (rawData) => {
         return {
             EC: 0,
             EM: 'Phim đã được lưu thành công!',
-            DT: data
+            DT: data ?? []
         }
     } catch (error) {
         console.log(error)
@@ -82,9 +82,10 @@ const handleDeleteMovie = async (rawData) => {
             data = await SavedMovies.findOne({ userId }) :
             data = await WatchHistory.findOne({ userId })
 
-        console.log('>>> data eee', data)
-        data.movies = data?.movies.filter(item => item.slug !== movieSlug)
-        await data.save();
+        if (data?.movies) {
+            data.movies = data?.movies.filter(item => item.slug !== movieSlug)
+            await data.save();
+        }
 
         return {
             EC: 0,

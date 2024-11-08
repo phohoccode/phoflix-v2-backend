@@ -135,7 +135,6 @@ const updateUser = async (req, res) => {
     try {
 
         const data = await authService.handleUpdateUser(req.body)
-        console.log('>>> updateUser-data', data)
 
         const payload = {
             id: data.DT.id,
@@ -175,10 +174,26 @@ const updateUser = async (req, res) => {
     }
 }
 
+const getUserAccount = (req, res) => {
+    if (req.isAuthenticated()) {
+        return res.json({
+            EC: 0,
+            EM: 'Lấy thông tin người dùng thành công!',
+            DT: req.user ?? {}
+        });
+    }
+    res.status(401).json({
+        EC: 0,
+        EM: 'Xác thực người dùng thất bại!',
+        DT: {}
+    });
+}
+
 module.exports = {
     login,
     resgister,
     sendOTP,
     forgotPassword,
-    updateUser
+    updateUser,
+    getUserAccount
 }

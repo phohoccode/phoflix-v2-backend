@@ -21,7 +21,7 @@ const verifyJWT = async (req, res, next) => {
     if (!refreshToken) {
         return res.status(405).json({
             EC: -1,
-            EM: 'Token đã hết hạn. Vui lòng đăng nhập lại!'
+            EM: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!'
         })
     }
 
@@ -37,22 +37,22 @@ const verifyJWT = async (req, res, next) => {
     } else {
         const response = await JWTService.findUserByToken(refreshToken)
 
-        if (+response.EC === -1) {
+        if (+response?.EC === -1) {
             return res.status(401).json({
-                EC: response.EC,
-                EM: response.EM
+                EC: response?.EC,
+                EM: response?.EM
             })
         }
 
         const payload = {
-            id: response.DT.id,
-            username: response.DT.username,
-            email: response.DT.email,
-            gender: response.DT.gender,
-            phone_number: response.DT.phone_number,
-            address: response.DT.address,
-            type_account: response.DT.type_account,
-            avatar: req.user?.avatar ?? ""
+            id: response?.DT?.id,
+            username: response?.DT?.username,
+            email: response?.DT?.email,
+            gender: response?.DT?.gender,
+            phone_number: response?.DT?.phone_number,
+            address: response?.DT?.address,
+            type_account: response?.DT?.type_account,
+            avatar: req?.user?.avatar ?? ""
         }
 
         const accessToken = JWTService.createJWT(payload)
