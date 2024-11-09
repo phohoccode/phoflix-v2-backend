@@ -13,17 +13,13 @@ const configLoginWithGoogle = () => {
     },
         async function (req, accessToken, refreshToken, profile, cb) {
 
-            console.log('>>> profile', profile)
             const rawData = {
                 username: profile.displayName,
                 email: profile?.emails?.[0]?.value,
                 type: 'GOOGLE'
             }
 
-            console.log('>>> profile', profile)
-
             const user = await authService.findOrInsertProfileSocialToDB(rawData)
-            console.log('>>> user', user)
             user.code = uuidv4()
 
             return cb(null, user)

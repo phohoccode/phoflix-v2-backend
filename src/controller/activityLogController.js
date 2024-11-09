@@ -2,7 +2,15 @@ const activityLogService = require("../service/activityLogService")
 
 const getActivityLog = async (req, res) => {
     try {
-        const { userId } = req.params ?? ""
+        const { userId } = req.params
+
+        if (!userId) {
+            return res.json({
+                EC: -1,
+                EM: "userId không tồn tại!",
+                DT: []
+            })
+        }
         const data = await activityLogService.handleGetActivityLog(userId)
 
         return res.json({

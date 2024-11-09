@@ -16,7 +16,8 @@ route.post('/send-otp', authController.sendOTP)
 route.post('/verify-token', JWTController.verifyToken)
 route.post('/forgot-password', authController.forgotPassword)
 route.post('/update-user', authController.updateUser)
-route.get('/user', authController.getUserAccount);
+route.get('/user-account', authController.getUserAccount);
+route.get('/another-user-account', authController.getUserById);
 
 route.get('/google',
     passport.authenticate('google', { scope: ['profile', 'email'] }));

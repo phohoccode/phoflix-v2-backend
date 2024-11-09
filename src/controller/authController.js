@@ -10,7 +10,7 @@ const sendOTP = async (req, res) => {
 
         const OTP = Math.floor(100000 + Math.random() * 900000)
 
-        const templatePath = req.body.type === 'REGISTER'
+        const templatePath = req.body?.type_otp === 'REGISTER'
             ? '../templates/register.html'
             : '../templates/forgot-password.html';
 
@@ -38,20 +38,19 @@ const sendOTP = async (req, res) => {
 
         const response = await transporter.sendMail({
             from: `phohoccode <${process.env.GOOGLE_APP_EMAIL}>`,
-            to: `${req.body.email}`,
+            to: `${req.body?.email}`,
             subject: "Xác minh tài khoản",
             text: "phohoccode",
             html: htmlToSend
         });
 
         if (response?.messageId) {
-            const response = await authService.insertCodeToDB(req.body.email, OTP, req.body.type_otp)
+            const response = await authService.insertCodeToDB(req.body?.email, OTP, req.body?.type_otp)
 
-            console.log(response)
-            if (+response.EC !== 0) {
+            if (+response?.EC !== 0) {
                 return res.status(401).json({
-                    EC: response.EC,
-                    EM: response.EM
+                    EC: response?.EC,
+                    EM: response?.EM
                 })
             }
 
@@ -175,18 +174,49 @@ const updateUser = async (req, res) => {
 }
 
 const getUserAccount = (req, res) => {
-    if (req.isAuthenticated()) {
-        return res.json({
-            EC: 0,
-            EM: 'Lấy thông tin người dùng thành công!',
-            DT: req.user ?? {}
-        });
+
+    try {
+        if (req.isAuthenticated()) {
+            return res.json({
+                EC: 0,
+                EM: 'Xác thực người dùng thành công!',
+                DT: req?.user ?? {}
+            });
+        } else {
+            res.status(401).json({
+                EC: 0,
+                EM: 'Xác thực người dùng thất bại!',
+                DT: {}
+            });
+        }
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            EC: -1,
+            EM: 'Lỗi không xác định!'
+        })
     }
-    res.status(401).json({
-        EC: 0,
-        EM: 'Xác thực người dùng thất bại!',
-        DT: {}
-    });
+
+}
+
+const getUserById = async (req, res) => {
+
+    try {
+        const { userId } = req.query
+        const data = await authService.handleGetUserById(userId)
+
+        return res.json({
+            EC: data?.EC,
+            EM: data?.EM,
+            DT: data?.DT
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            EC: -1,
+            EM: 'Lỗi không xác định!'
+        })
+    }
 }
 
 module.exports = {
@@ -195,5 +225,6 @@ module.exports = {
     sendOTP,
     forgotPassword,
     updateUser,
-    getUserAccount
+    getUserAccount,
+    getUserById
 }

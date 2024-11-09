@@ -2,6 +2,20 @@ const moviesService = require("../service/moviesService")
 
 const getAllMovies = async (req, res) => {
     try {
+
+        const { type, userId } = req.query
+
+        if (!type || !userId) {
+            return res.json({
+                EC: -1,
+                EM: 'type hoặc userId không tồn tai!',
+                DT: {
+                    type: 'saved-movies',
+                    movies: []
+                }
+            })
+        }
+
         const data = await moviesService.handleGetALlMovies(req.query)
 
         return res.json({

@@ -3,10 +3,19 @@ const commentService = require("../service/commentService")
 const getComments = async (req, res) => {
     try {
         const { movieSlug, sortOrder } = req.params
+
+        if (!movieSlug || !sortOrder) {
+            return res.json({
+                EC: -1,
+                EM: "movieSlug hoặc sortOrder không tồn tại!",
+                DT: []
+            })
+        }
+
         const data = await commentService.handleGetComments({
             movieSlug, sortOrder
         })
-
+        
         return res.json({
             EC: data.EC,
             EM: data.EM,

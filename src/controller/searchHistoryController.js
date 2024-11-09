@@ -2,7 +2,16 @@ const searchHisoryService = require('../service/searchHistoryService')
 
 const getSearchHistory = async (req, res) => {
     try {
-        const userId = req.params?.userId ?? ""
+        const userId = req.params?.userId
+
+        if (!userId) {
+            return res.json({
+                EC: -1,
+                EM: 'userId không tồn tai!',
+                DT: []
+            })
+        }
+
         const data = await searchHisoryService.handleGetSearchHistory(userId)
 
         return res.json({

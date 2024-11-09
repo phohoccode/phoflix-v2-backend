@@ -5,9 +5,8 @@ module.exports = {
         await queryInterface.createTable('ReportedComments', {
             id: {
                 allowNull: false,
-                autoIncrement: true,  // Tự động tăng
                 primaryKey: true,
-                type: Sequelize.INTEGER
+                type: Sequelize.STRING
             },
             id_comment: {
                 type: Sequelize.STRING, 
@@ -19,10 +18,6 @@ module.exports = {
                 onDelete: 'CASCADE',  
             },
             reporting_reason: {
-                type: Sequelize.STRING, 
-                allowNull: false
-            },
-            reporter: {
                 type: Sequelize.STRING, 
                 allowNull: false
             },

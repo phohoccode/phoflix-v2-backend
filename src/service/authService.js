@@ -326,11 +326,46 @@ const handleUpdateUser = async (rawData) => {
     }
 }
 
+const handleGetUserById = async (userId) => {
+    try {
+        const user = await db.Users.findOne({
+            where: { id: userId }
+        })
+
+        if (!user) {
+            return {
+                EC: -1,
+                EM: "Không tìm thấy thông tin người dùng!",
+                DT: {}
+            }
+        }
+
+        console.log('>>> user', user)
+        return {
+            EC: 0,
+            EM: 'Lấy thông tin người dùng thành công!',
+            DT: {
+                id: user?.id,
+                username: user?.username,
+                gender: user?.gender,
+                createdAt: user?.createdAt
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            EC: -1,
+            EM: 'Lỗi không xác định!'
+        }
+    }
+}
+
 module.exports = {
     handleRegister,
     handleLogin,
     insertCodeToDB,
     findOrInsertProfileSocialToDB,
     handleResetPassword,
-    handleUpdateUser
+    handleUpdateUser,
+    handleGetUserById
 }

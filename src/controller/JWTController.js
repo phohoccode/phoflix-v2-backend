@@ -8,7 +8,7 @@ const verifyToken = async (req, res, next) => {
 
         const ssoToken = req.body?.token
 
-        if (req.user?.code !== ssoToken) {
+        if (req?.user?.code !== ssoToken) {
             return res.status(401).json({
                 EC: -1,
                 EM: 'Token không hợp lệ!'
@@ -17,24 +17,24 @@ const verifyToken = async (req, res, next) => {
 
         const refreshToken = uuidv4()
         const response =
-            await JWTService.insertTokenToDB(req.user.email, refreshToken, req.body.typeAccount)
+            await JWTService.insertTokenToDB(req?.user?.email, refreshToken, req.body?.typeAccount)
 
         if (+response?.EC === -1) {
             return res.status(401).json({
-                EC: response.EC,
-                EM: response.EM
+                EC: response?.EC,
+                EM: response?.EM
             })
         }
 
         const payload = {
-            id: req.user.id,
-            username: req.user.username,
-            email: req.user.email,
-            gender: req.user.gender,
-            phone_number: req.user.phone_number,
-            address: req.user.address,
-            type_account: req.user.type_account,
-            avatar: req.user?.avatar ?? ""
+            id: req?.user?.id,
+            username: req?.user?.username,
+            email: req?.user?.email,
+            gender: req?.user?.gender,
+            phone_number: req?.user?.phone_number,
+            address: req?.user?.address,
+            type_account: req?.user?.type_account,
+            avatar: req?.user?.avatar ?? ""
         }
 
         const accessToken = createJWT(payload)

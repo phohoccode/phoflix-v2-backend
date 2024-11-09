@@ -34,10 +34,6 @@ module.exports = (sequelize, DataTypes) => {
         reporting_reason: {
             type: DataTypes.STRING,
             allowNull: false
-        },
-        reporter: {
-            type: DataTypes.STRING,  
-            allowNull: false
         }
     }, {
         sequelize,

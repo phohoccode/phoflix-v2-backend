@@ -8,7 +8,8 @@ const nonSecurePaths = [
     '/verify-token',
     '/google',
     '/google/callback',
-    '/send-otp'];
+    '/send-otp',
+    'another-user-account'];
 
 const verifyJWT = async (req, res, next) => {
     if (nonSecurePaths.includes(req.path)) return next();
