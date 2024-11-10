@@ -5,7 +5,7 @@ const route = express.Router()
 
 route.get('/get-activity-log/:userId', activityLogController.getActivityLog)
 route.post('/add-activity-log', activityLogController.addActivityLog)
-route.delete('/delete-activity-log', activityLogController.deleteActivityLog)
+route.post('/delete-activity-log', activityLogController.deleteActivityLog)
 
 
 module.exports = route

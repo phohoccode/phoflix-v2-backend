@@ -56,10 +56,10 @@ const handleAddActivityLog = async (rawData) => {
     }
 }
 
-const handleDeleteActivityLog = async () => {
+const handleDeleteActivityLog = async (userId) => {
     try {
         const rows = await db.ActivityLogs.destroy({
-            where: {}
+            where: { user_id: userId }
         });
 
         if (rows === 0) {

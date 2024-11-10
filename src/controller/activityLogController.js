@@ -48,7 +48,16 @@ const addActivityLog = async (req, res) => {
 const deleteActivityLog = async (req, res) => {
     try {
 
-        const data = await activityLogService.handleDeleteActivityLog();
+        const { userId } = req.body
+
+        if (!userId) {
+            return res.json({
+                EC: -1,
+                EM: "userId không tồn tại!"
+            })
+        }
+
+        const data = await activityLogService.handleDeleteActivityLog(userId);
 
         return res.json({
             EC: data.EC,
