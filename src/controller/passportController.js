@@ -41,8 +41,23 @@ const handleLogin = (req, res, next) => {
 const handleLogout = (req, res, next) => {
     req.logout(function (err) {
         if (err) { return next(err); }
-        res.clearCookie('access_token');
-        res.clearCookie('refresh_token');
+        
+         res.clearCookie('refresh_token', { 
+            maxAge: +process.env.MAX_AGE_REFRESH_TOKEN,  // Cung cấp maxAge tương tự khi tạo cookie
+            httpOnly: true, 
+            secure: process.env.NODE_ENV === 'production', // Chỉ dùng https ở môi trường sản xuất
+            sameSite: 'none', // Cung cấp lại sameSite cho cookie
+            path: '/' // Đảm bảo cookie bị xóa trên toàn bộ ứng dụng
+        });
+
+        // Xóa cookie 'access_token'
+        res.clearCookie('access_token', { 
+            maxAge: +process.env.MAX_AGE_ACCESS_TOKEN,  // Cung cấp maxAge tương tự khi tạo cookie
+            httpOnly: true, 
+            secure: process.env.NODE_ENV === 'production', // Chỉ dùng https ở môi trường sản xuất
+            sameSite: 'none', // Cung cấp lại sameSite cho cookie
+            path: '/' // Đảm bảo cookie bị xóa trên toàn bộ ứng dụng
+        });
         res.json({
             EC: 0,
             EM: 'Đăng xuất tài khoản thành công!'
