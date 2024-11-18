@@ -41,7 +41,8 @@ const handleLogin = (req, res, next) => {
 const handleLogout = (req, res, next) => {
     req.logout(function (err) {
         if (err) { return next(err); }
-        // res.redirect('/');
+        res.clearCookie('access_token');
+        res.clearCookie('refresh_token');
         res.json({
             EC: 0,
             EM: 'Đăng xuất tài khoản thành công!'
