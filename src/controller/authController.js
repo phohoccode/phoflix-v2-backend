@@ -4,6 +4,7 @@ const nodemailer = require("nodemailer");
 const handlebars = require('handlebars');
 const fs = require('fs');
 const path = require('path');
+const { handleInsertTokeToCookies } = require("../utils");
 
 const sendOTP = async (req, res) => {
     try {
@@ -154,7 +155,7 @@ const updateUser = async (req, res) => {
         }
 
         // set cookies
-        JWTService.insertTokenToCookies(res, accessToken, data.DT.refresh_token)
+        handleInsertTokeToCookies(res, accessToken, data.DT?.refresh_token)  
 
         return res.status(200).json({
             EC: data.EC,

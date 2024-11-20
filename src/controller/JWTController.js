@@ -1,7 +1,8 @@
 require('dotenv').config()
 const { createJWT } = require('../service/JWTService')
 const { v4: uuidv4 } = require('uuid');
-const JWTService = require('../service/JWTService')
+const JWTService = require('../service/JWTService');
+const { handleInsertTokeToCookies } = require('../utils');
 
 const verifyToken = async (req, res, next) => {
     try {
@@ -40,7 +41,7 @@ const verifyToken = async (req, res, next) => {
         const accessToken = createJWT(payload)
 
         // set cookies
-        JWTService.insertTokenToCookies(res, accessToken, refreshToken)
+        handleInsertTokeToCookies(res, accessToken, refreshToken)
 
         return res.status(200).json({
             EC: 0,

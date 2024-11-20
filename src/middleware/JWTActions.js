@@ -1,4 +1,5 @@
-const JWTService = require('../service/JWTService')
+const JWTService = require('../service/JWTService');
+const { handleInsertTokeToCookies } = require('../utils');
 
 const nonSecurePaths = [
     '/logout',
@@ -65,7 +66,7 @@ const verifyJWT = async (req, res, next) => {
         }
 
         // set cookies
-        JWTService.insertTokenToCookies(res, accessToken, refreshToken)
+        handleInsertTokeToCookies(res, accessToken, refreshToken)
 
         return res.status(401).json({
             EC: -1,
