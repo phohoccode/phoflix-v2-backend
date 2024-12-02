@@ -2,7 +2,6 @@ const moviesService = require("../service/moviesService")
 
 const getAllMovies = async (req, res) => {
     try {
-
         const { type, userId } = req.query
 
         if (!type || !userId) {

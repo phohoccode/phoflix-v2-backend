@@ -24,7 +24,7 @@ const handleLogin = (req, res, next) => {
         }
 
         if (!user) {
-            return res.status(401).json({
+            return res.status(402).json({
                 EC: -1,
                 EM: info
             });

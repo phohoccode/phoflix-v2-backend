@@ -1,5 +1,6 @@
 const db = require('../models/mysql/index')
 const bcrypt = require('bcryptjs');
+const validator = require('validator');
 const { v4: uuidv4 } = require('uuid');
 
 const salt = bcrypt.genSaltSync(10);
@@ -141,11 +142,21 @@ const handleRegister = async (rawData) => {
     try {
 
         const email = await checkExistEmail(rawData?.email)
+        console.log(rawData)
 
         if (email) {
             return {
                 EC: -1,
                 EM: 'Email đã tồn tại!',
+            }
+        }
+
+        const strongPassword = validator.isStrongPassword(rawData?.password)
+
+        if (!strongPassword) {
+            return {
+                EC: -1,
+                EM: 'Mật khẩu yếu! Yêu cầu ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.',
             }
         }
 
@@ -235,6 +246,15 @@ const handleResetPassword = async (rawData) => {
             }
         }
 
+        const strongPassword = validator.isStrongPassword(rawData?.password)
+
+        if (!strongPassword) {
+            return {
+                EC: -1,
+                EM: 'Mật khẩu yếu! Yêu cầu ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.',
+            }
+        }
+
         const user = await db.OTPs.findOne({
             where: { email: rawData?.email, type_otp: rawData?.type_otp },
             raw: true
@@ -277,6 +297,14 @@ const handleResetPassword = async (rawData) => {
 
 const handleUpdateUser = async (rawData) => {
     try {
+
+        if (rawData?.phone_number && !validator.isMobilePhone(rawData?.phone_number)) {
+            return {
+                EC: -1,
+                EM: 'Số điện thoại không hợp lệ!',
+                DT: {}
+            }
+        }
 
         const rows = await db.Users.update(
             {

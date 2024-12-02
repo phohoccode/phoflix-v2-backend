@@ -81,6 +81,13 @@ const login = async (req, res) => {
 
         const data = await authService.handleLogin(req.body)
 
+        if (data?.EC !== 0) {
+            return res.status(402).json({
+                EC: data?.EC,
+                EM: data?.EM
+            })
+        }
+
         return res.status(200).json({
             EC: data.EC,
             EM: data.EM,
@@ -136,14 +143,21 @@ const updateUser = async (req, res) => {
 
         const data = await authService.handleUpdateUser(req.body)
 
+        if (data?.EC !== 0) {
+            return res.status(402).json({
+                EC: data?.EC,
+                EM: data?.EM
+            })
+        }
+
         const payload = {
-            id: data.DT.id,
-            username: data.DT.username,
-            email: data.DT.email,
-            gender: data.DT.gender,
-            phone_number: data.DT.phone_number,
-            address: data.DT.address,
-            type_account: data.DT.type_account,
+            id: data?.DT?.id,
+            username: data?.DT?.username,
+            email: data?.DT?.email,
+            gender: data?.DT?.gender,
+            phone_number: data?.DT?.phone_number,
+            address: data?.DT?.address,
+            type_account: data?.DT?.type_account,
         }
 
         const accessToken = JWTService.createJWT(payload)
@@ -151,17 +165,17 @@ const updateUser = async (req, res) => {
         req.user = {
             ...payload,
             access_token: accessToken,
-            refresh_token: data.DT.refresh_token
+            refresh_token: data?.DT?.refresh_token
         }
 
         // set cookies
-        handleInsertTokeToCookies(res, accessToken, data.DT?.refresh_token)  
+        handleInsertTokeToCookies(res, accessToken, data?.DT?.refresh_token)
 
         return res.status(200).json({
-            EC: data.EC,
-            EM: data.EM,
+            EC: data?.EC,
+            EM: data?.EM,
             DT: {
-                ...data.DT,
+                ...data?.DT,
                 access_token: accessToken
             }
         })
