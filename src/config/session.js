@@ -45,7 +45,7 @@ const configSession = (app) => {
     // Mã hóa: chuyển định dạng user thành dạng có thể lưu trữ trong session
     passport.serializeUser(function (user, cb) {
         process.nextTick(function () {
-            console.log('>>> Mã hoá:', user)
+            // console.log('>>> Mã hoá:', user)
             cb(null, user)
         });
     });
@@ -53,8 +53,7 @@ const configSession = (app) => {
     // Giải mã hóa: chuyển định dạng từ session trở lại thành đối tượng user
     passport.deserializeUser(function (user, cb) {
         process.nextTick(function () {
-            console.log('>>> Giãi mã hoá:', user)
-
+            // console.log('>>> Giãi mã hoá:', user)
             return cb(null, user);
         });
     });

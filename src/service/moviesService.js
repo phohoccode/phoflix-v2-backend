@@ -7,7 +7,7 @@ const handleGetALlMovies = async (rawData) => {
         let data
         type === 'saved-movies' ?
             data = await SavedMovies.findOne({ userId }) :
-            data = await WatchHistory.findOne({ userId })
+            data = await WatchHistory.findOne({ userId });
 
         if (!data || data?.length === 0) {
             return {
@@ -25,7 +25,7 @@ const handleGetALlMovies = async (rawData) => {
             EM: 'Lấy bộ phim đã lưu thành công!',
             DT: {
                 type,
-                movies: data?.movies ?? []
+                movies: data?.movies.reverse() ?? []
             }
         };
 
