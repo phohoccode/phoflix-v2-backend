@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const handleGetRating = async (rawData) => {
     try {
+
         const { movieSlug, userId } = rawData
         const response = await db.Ratings.findAll({
             where: { movie_slug: movieSlug },
@@ -10,11 +11,19 @@ const handleGetRating = async (rawData) => {
             raw: true
         });
 
+        const listUserRating = response.map(rating => {
+            return {
+                username: rating['user.username'],
+                rating: rating.rating
+            }
+        })
+
         if (response.length === 0) {
             return {
                 EC: 0,
                 EM: 'Không có đánh giá nào.',
                 DT: {
+                    listUserRating,
                     ratingWidthUser: 0,
                     averageRating: 0,
                     countRating: 0
@@ -28,13 +37,14 @@ const handleGetRating = async (rawData) => {
         })
 
         const totalRating = response.reduce((acc, rating) => acc + rating.rating, 0);
-        const averageRating = totalRating / response.length;
+        const averageRating = (totalRating / response.length).toFixed(1);
         const countRating = response.length;
 
         return {
             EC: 0,
             EM: 'Lấy danh sách đánh giá thành công!',
             DT: {
+                listUserRating,
                 ratingWidthUser: ratingCurrentUser?.rating,
                 averageRating: averageRating,
                 countRating: countRating
@@ -52,6 +62,7 @@ const handleGetRating = async (rawData) => {
 
 const handleAddRating = async (rawData) => {
     try {
+
 
         const { userId, movieSlug, rating } = rawData
 
