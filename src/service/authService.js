@@ -126,6 +126,7 @@ const handleLogin = async (rawData) => {
                 address: user?.address,
                 phone_number: user?.phone_number,
                 gender: user?.gender,
+                type_account: user?.type_account,
                 code: uuidv4()
             }
         }

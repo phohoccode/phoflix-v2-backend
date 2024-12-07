@@ -54,7 +54,6 @@ const verifyJWT = async (req, res, next) => {
             phone_number: response?.DT?.phone_number,
             address: response?.DT?.address,
             type_account: response?.DT?.type_account,
-            avatar: req?.user?.avatar ?? ""
         }
 
         const accessToken = JWTService.createJWT(payload)
