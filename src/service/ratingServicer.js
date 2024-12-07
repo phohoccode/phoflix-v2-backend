@@ -11,10 +11,13 @@ const handleGetRating = async (rawData) => {
             raw: true
         });
 
+        console.log(response)
+
         const listUserRating = response.map(rating => {
             return {
-                username: rating['user.username'],
-                rating: rating.rating
+                userId: rating?.user_id,
+                username: rating?.['user.username'],
+                rating: rating?.rating
             }
         })
 
