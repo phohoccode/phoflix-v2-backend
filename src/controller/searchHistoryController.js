@@ -63,8 +63,27 @@ const deleteSearchHistory = async (req, res) => {
     }
 }
 
+const deleteAllSearchHistory = async (req, res) => {
+    try {
+        const userId = req.body?.userId ?? ""
+        const data = await searchHisoryService.handleDeleteAllSearchHistory(userId)
+
+        return res.json({
+            EC: data.EC,
+            EM: data.EM
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            EC: -1,
+            EM: 'Lỗi không xác định!'
+        })
+    }
+}
+
 module.exports = {
     addSearchHistory,
     getSearchHistory,
-    deleteSearchHistory
+    deleteSearchHistory,
+    deleteAllSearchHistory
 }

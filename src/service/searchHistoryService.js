@@ -75,12 +75,9 @@ const handleAddSearchHistory = async (rawData) => {
 
 const handleDeleteSearchHistory = async (idSearchHistory) => {
     try {
-
-        const rows = await db.SearchHistory.destroy({
+        await db.SearchHistory.destroy({
             where: { id: idSearchHistory }
         })
-
-        console.log('>>> rows', rows)
 
         return {
             EC: 0,
@@ -95,8 +92,28 @@ const handleDeleteSearchHistory = async (idSearchHistory) => {
     }
 }
 
+const handleDeleteAllSearchHistory = async (userId) => {
+    try {
+        await db.SearchHistory.destroy({
+            where: { user_id: userId }
+        })
+
+        return {
+            EC: 0,
+            EM: "Xoá tất cả lịch sử tìm kiếm thành công!"
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            EC: -1,
+            EM: 'Lỗi không xác định!'
+        }
+    }
+}
+
 module.exports = {
     handleAddSearchHistory,
     handleGetSearchHistory,
-    handleDeleteSearchHistory
+    handleDeleteSearchHistory,
+    handleDeleteAllSearchHistory
 }
