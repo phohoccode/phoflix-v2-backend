@@ -4,12 +4,12 @@ const WatchHistory = require("../models/mongoDB/watchHistory")
 const handleGetALlMovies = async (rawData) => {
     try {
         const { userId, type } = rawData
-        let data
+        let data;
         type === 'saved-movies' ?
             data = await SavedMovies.findOne({ userId }) :
             data = await WatchHistory.findOne({ userId });
 
-        if (!data || data?.length === 0) {
+        if (!data || data?.movies?.length === 0) {
             return {
                 EC: 0,
                 EM: type === 'saved-movies' ? 'Danh sách phim đang trống!' : 'Lịch sử xem đang trống!',
@@ -28,8 +28,6 @@ const handleGetALlMovies = async (rawData) => {
                 movies: data?.movies.reverse() ?? []
             }
         };
-
-
     } catch (error) {
         console.log(error)
         return {
